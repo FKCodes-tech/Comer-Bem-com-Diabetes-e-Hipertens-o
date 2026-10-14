@@ -1,0 +1,779 @@
+<!doctype html>
+<html lang="pt" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Comer Bem com Diabetes e Hipertensão | Receitas Moçambicanas</title>
+    <meta name="description" content="Receitas moçambicanas simples, baratas e saborosas para quem tem diabetes ou tensão alta. Cardápio de 7 dias e lista de compras com ingredientes do mercado local por 299 MT." />
+    <meta property="og:title" content="Comer Bem com Diabetes e Hipertensão | Receitas Moçambicanas" />
+    <meta property="og:description" content="Receitas moçambicanas simples, baratas e saborosas para quem tem diabetes ou tensão alta. Cardápio de 7 dias e lista de compras com ingredientes do mercado local por 299 MT." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&family=Playfair+Display:ital,wght@0,600..800;1,600..800&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+              serif: ['"Playfair Display"', 'Georgia', 'serif'],
+            }
+          }
+        }
+      }
+    </script>
+
+    <!-- React 18 & ReactDOM UMD + Babel Standalone -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <style>
+      body {
+        font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      }
+      h1, h2, h3, .font-display {
+        letter-spacing: -0.025em;
+      }
+      .font-serif-display {
+        font-family: 'Playfair Display', Georgia, serif;
+      }
+      /* Custom subtle scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #f1f5f9;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+      }
+    </style>
+  </head>
+  <body class="bg-neutral-50 text-neutral-900 antialiased selection:bg-emerald-100 selection:text-emerald-900">
+    <div id="root"></div>
+
+    <script type="text/babel">
+      const { useState, useEffect } = React;
+
+      // ==========================================
+      // ICON COMPONENTS (Self-contained SVG Icons)
+      // ==========================================
+      const Icon = ({ path, className = "w-4 h-4", ...props }) => (
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}>
+          {path}
+        </svg>
+      );
+
+      const BookOpen = (p) => <Icon {...p} path={<><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></>} />;
+      const ArrowRight = (p) => <Icon {...p} path={<><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></>} />;
+      const ShieldCheck = (p) => <Icon {...p} path={<><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></>} />;
+      const Smartphone = (p) => <Icon {...p} path={<><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></>} />;
+      const Check = (p) => <Icon {...p} path={<polyline points="20 6 9 17 4 12"/>} />;
+      const HelpCircle = (p) => <Icon {...p} path={<><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></>} />;
+      const AlertTriangle = (p) => <Icon {...p} path={<><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></>} />;
+      const Coins = (p) => <Icon {...p} path={<><circle cx="8" cy="8" r="6"/><path d="M18.09 10.37A6 6 0 1 1 10.34 18"/><path d="M7 6h1v4"/><path d="m16.71 13.88.7.71-2.82 2.82"/></>} />;
+      const Eye = (p) => <Icon {...p} path={<><path d="2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></>} />;
+      const Heart = (p) => <Icon {...p} path={<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>} />;
+      const PieChart = (p) => <Icon {...p} path={<><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></>} />;
+      const ShoppingBag = (p) => <Icon {...p} path={<><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></>} />;
+      const Sparkles = (p) => <Icon {...p} path={<><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></>} />;
+      const Calendar = (p) => <Icon {...p} path={<><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></>} />;
+      const CheckSquare = (p) => <Icon {...p} path={<><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></>} />;
+      const HeartPulse = (p) => <Icon {...p} path={<><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/><path d="M3.22 12H9.5l.5-1 2 4.5 2-7 1.5 3.5h4.28"/></>} />;
+      const FileText = (p) => <Icon {...p} path={<><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></>} />;
+      const X = (p) => <Icon {...p} path={<><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></>} />;
+      const ShieldAlert = (p) => <Icon {...p} path={<><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></>} />;
+      const HeartHandshake = (p) => <Icon {...p} path={<><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/><path d="m11 14 2 2 4-4"/></>} />;
+      const ClipboardList = (p) => <Icon {...p} path={<><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/></>} />;
+      const Layout = (p) => <Icon {...p} path={<><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></>} />;
+      const Leaf = (p) => <Icon {...p} path={<><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></>} />;
+      const Gift = (p) => <Icon {...p} path={<><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 4.8 0 0 1 12 8a4.8 4.8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"/></>} />;
+      const CheckCheck = (p) => <Icon {...p} path={<><path d="M18 6 7 17l-5-5"/><path d="m22 10-7.5 7.5L13 16"/></>} />;
+      const Play = (p) => <Icon {...p} path={<polygon points="5 3 19 12 5 21 5 3"/>} />;
+      const Pause = (p) => <Icon {...p} path={<><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></>} />;
+      const Volume2 = (p) => <Icon {...p} path={<><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></>} />;
+      const VolumeX = (p) => <Icon {...p} path={<><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="22" y1="9" x2="16" y2="15"/><line x1="16" y1="9" x2="22" y2="15"/></>} />;
+      const Clock = (p) => <Icon {...p} path={<><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></>} />;
+      const Lock = (p) => <Icon {...p} path={<><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></>} />;
+      const ChevronDown = (p) => <Icon {...p} path={<polyline points="6 9 12 15 18 9"/>} />;
+      const MessageCircle = (p) => <Icon {...p} path={<path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>} />;
+      const Users = (p) => <Icon {...p} path={<><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></>} />;
+      const Banknote = (p) => <Icon {...p} path={<><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></>} />;
+      const Subtitles = (p) => <Icon {...p} path={<><rect width="20" height="14" x="2" y="5" rx="2"/><path d="M6 11h4M14 11h4M6 15h12"/></>} />;
+      const RotateCcw = (p) => <Icon {...p} path={<><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></>} />;
+      const CheckCircle2 = (p) => <Icon {...p} path={<><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></>} />;
+      const Download = (p) => <Icon {...p} path={<><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></>} />;
+      const CreditCard = (p) => <Icon {...p} path={<><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></>} />;
+
+      // ==========================================
+      // DATA CONSTANTS (Direct from ebookData.ts)
+      // ==========================================
+      const CHECKOUT_URL = "https://pagar.co.mz/p/comer-bem-com-diabetes-hipertensao-x7afm4";
+
+      const EBOOK_INFO = {
+        title: "Comer Bem com Diabetes e Hipertensão",
+        subtitle: "Receitas moçambicanas simples, baratas e saborosas, com cardápio de 7 dias e lista de compras. Tudo com ingredientes do mercado local.",
+        originalPrice: 499,
+        price: 299,
+        currency: "MT",
+        pageCount: "68 páginas ilustradas",
+        format: "PDF Digital (Lê no telemóvel, tablet ou computador)",
+        checkoutUrl: CHECKOUT_URL,
+        supportWhatsapp: "+258 84 123 4567",
+      };
+
+      const THREE_KEYS = [
+        {
+          number: "1",
+          title: "Quanto comer",
+          desc: "Aprenda a dose certa de xima, arroz ou mandioca na medida da sua mão, sem passar fome e sem picos de açúcar no sangue.",
+          highlight: "Regra prática sem balança",
+        },
+        {
+          number: "2",
+          title: "Com o quê combinar",
+          desc: "A fibra dos legumes locais (couve, feijão nhemba, cacana) abranda a digestão da xima e evita que a glicose dispare.",
+          highlight: "Equilíbrio que protege os vasos sanguíneos",
+        },
+        {
+          number: "3",
+          title: "Como preparar",
+          desc: "Trocar caldos artificiais com excesso de sódio por temperos frescos do mercado: alho, cebola, limão, piripiri e louro.",
+          highlight: "Sabor tradicional de verdade",
+        },
+      ];
+
+      const WHAT_YOU_RECEIVE = [
+        {
+          id: "plate-method",
+          title: "O método do prato moçambicano",
+          desc: "Como montar qualquer prato sem balanças nem contas complicadas. Metade com legumes locais, um quarto com proteína (carapau, feijão, frango) e um quarto com hidratos controlados.",
+          icon: "pie-chart",
+          pages: "Capítulo 1 · 12 páginas",
+        },
+        {
+          id: "market-allies",
+          title: "Alimentos aliados no mercado local",
+          desc: "Guia completo dos mercados moçambicanos: o que comprar barato na banca (couve, espinafre, quiabo, abóbora, feijão manteiga) e o que convém limitar.",
+          icon: "shopping-bag",
+          pages: "Capítulo 2 · 14 páginas",
+        },
+        {
+          id: "salt-secrets",
+          title: "Como reduzir o sal sem perder o sabor",
+          desc: "O segredo dos chefs moçambicanos para temperar peixe, frango e legumes com alho pisado, limão fresco, gengibre e folhas aromáticas.",
+          icon: "sparkles",
+          pages: "Capítulo 3 · 8 páginas",
+        },
+        {
+          id: "recipes",
+          title: "Receitas do dia a dia passo a passo",
+          desc: "Pratos tradicionais adaptados com amor: carapau assado, matapa equilibrada sem sal em excesso, feijão nhemba nutritivo, caldeirada de legumes e mais.",
+          icon: "book-open",
+          pages: "Capítulo 4 · 24 páginas",
+        },
+        {
+          id: "meal-plan",
+          title: "Cardápio completo de 7 dias",
+          desc: "Pequeno-almoço, almoço, lanche e jantar organizados dia após dia. Nunca mais fique parada na cozinha a pensar 'o que vou fazer hoje?'.",
+          icon: "calendar",
+          pages: "Capítulo 5 · 6 páginas",
+        },
+        {
+          id: "budget-list",
+          title: "Lista de compras económica",
+          desc: "Planeada para o orçamento familiar moçambicano, comprando nos mercados locais (Zimpeto, Xipamanine, Mercado Central, etc.) sem desperdício.",
+          icon: "check-square",
+          pages: "Capítulo 6 · 4 páginas",
+        },
+        {
+          id: "health-habits",
+          title: "Hábitos saudáveis e sinais de alerta",
+          desc: "Dicas simples de hidratação, caminhadas e os sinais cruciais de tensão ou glicemia que exigem ida imediata ao centro de saúde.",
+          icon: "heart-pulse",
+          pages: "Capítulo 7 · 6 páginas",
+        },
+      ];
+
+      const AUDIENCE_CHECKLIST = {
+        isForYou: [
+          "Recebeu diagnóstico de diabetes tipo 2 ou pré-diabetes e quer manter o açúcar no sangue estável com comida boa.",
+          "Tem tensão arterial alta e precisa de reduzir o consumo de sal sem achar a comida insossa.",
+          "É filho(a), esposo(a) ou cuidador(a) e quer cozinhar refeições saudáveis para a família sem ter de fazer duas panelas separadas.",
+          "Quer prevenir complicações graves (AVC, problemas renais, visão) mantendo o prazer de sentar à mesa com a família.",
+          "Quer usar ingredientes que se compram facilmente em qualquer mercado moçambicano por preços acessíveis.",
+        ],
+        notForYou: [
+          "Procura 'curas milagrosas' em 48 horas ou chás mágicos que prometem fazer desaparecer a doença.",
+          "Quer abandonar ou substituir a medicação e consultas do médico (o ebook complementa a alimentação, nunca substitui o tratamento médico).",
+          "Não está disposto(a) a fazer pequenos ajustes simples na forma de cozinhar no seu dia a dia.",
+        ],
+      };
+
+      const BONUSES = [
+        {
+          number: "Bónus 1",
+          title: "Lista de Compras Imprimível (1 Página)",
+          desc: "Um resumo prático para imprimir ou guardar no telemóvel e levar na mão para o mercado ou quitanda.",
+          value: "Valor normal: 150 MT",
+          free: "Incluído Grátis",
+          icon: "clipboard-list",
+        },
+        {
+          number: "Bónus 2",
+          title: "Cardápio Semanal em Formato Cartaz",
+          desc: "Folha visual elegante em alta resolução pronta para colar na geleira ou na parede da cozinha.",
+          value: "Valor normal: 200 MT",
+          free: "Incluído Grátis",
+          icon: "layout",
+        },
+        {
+          number: "Bónus 3",
+          title: "Guia Rápido do Sal: 10 Trocas Práticas",
+          desc: "10 substituições simples e saborosas de caldos e sal refinado por misturas de ervas e especiarias moçambicanas.",
+          value: "Valor normal: 150 MT",
+          free: "Incluído Grátis",
+          icon: "leaf",
+        },
+      ];
+
+      const TESTIMONIALS = [
+        {
+          id: "1",
+          author: "Dona Lurdes Sitoe",
+          location: "Maputo (Bairro do Jardim)",
+          situation: "Hipertensa há 4 anos",
+          message: "Achei que comer saudável era comer peixe cozido sem graça na água. O truque do alho pisado com limão e piripiri mudou os meus almoços. A minha tensão desceu para 12/8 e toda a casa come da mesma comida sem reclamar!",
+          time: "Hoje às 11:24",
+          verified: true,
+        },
+        {
+          id: "2",
+          author: "Sr. Ernesto Mabunda",
+          location: "Matola",
+          situation: "Diabetes tipo 2 diagnosticada recentemente",
+          message: "O médico disse-me para cortar na xima e eu fiquei em pânico. No ebook o método do prato explicou-me como juntar a xima com a couve e o carapau sem subir a glicemia. Meço de manhã e os valores estão normais. Valeu cada metical.",
+          time: "Ontem às 18:02",
+          verified: true,
+        },
+        {
+          id: "3",
+          author: "Amina Calisto",
+          location: "Beira (Munhava)",
+          situation: "Cuida da mãe idosa",
+          message: "Eu cozinhava duas panelas diferentes: uma para a mamã e outra para os miúdos. Agora faço as receitas do ebook com ingredientes da banca e todos comem juntos. A lista de compras poupou-nos muito dinheiro no mercado.",
+          time: "Segunda-feira às 09:15",
+          verified: true,
+        },
+      ];
+
+      const FAQS = [
+        {
+          question: "Como recebo o ebook?",
+          answer: "Depois do pagamento aprovado (seja por M-Pesa, e-Mola, cartão ou PayPal), recebes imediatamente no ecrã o botão para descarregar o PDF e uma cópia no teu WhatsApp ou email. O acesso é instantâneo.",
+        },
+        {
+          question: "Posso pagar por M-Pesa ou e-Mola?",
+          answer: "Sim! Podes pagar diretamente com M-Pesa (Vodacom) ou e-Mola (Movitel). É rápido, seguro e recebes a confirmação no teu telemóvel na hora. Também aceitamos PayPal e cartões Visa/Mastercard.",
+        },
+        {
+          question: "Serve para diabetes e tensão alta ao mesmo tempo?",
+          answer: "Sim, exatamente. O guia foi desenhado para quem tem uma ou ambas as condições. As receitas e porções combinam controle rigoroso de sódio (para a tensão) com controle de hidratos refinados e índice glicémico (para o diabetes).",
+        },
+        {
+          question: "Preciso de ingredientes especiais ou caros?",
+          answer: "Não! Nada de sementes caras ou produtos de lojas importadas. Tudo é feito com o que compras na mercearia do bairro e na banca do mercado: couve, tomate, cebola, feijão nhemba, mandioca, xima de milho, carapau, cavala e limão.",
+        },
+        {
+          question: "O ebook substitui o médico?",
+          answer: "Não. Este guia tem fins educativos para te orientar na alimentação do dia a dia. Deves sempre continuar a tomar os medicamentos prescritos e a fazer as tuas consultas de rotina com o teu médico ou enfermeiro.",
+        },
+        {
+          question: "Lê-se bem no telemóvel?",
+          answer: "Sim! O formato PDF foi desenhado com letras grandes, imagens nítidas e boa formatação, pensado especialmente para ler com conforto no ecrã de qualquer telemóvel sem cansar a vista.",
+        },
+      ];
+
+      const SAMPLE_RECIPE = {
+        id: "carapau-grelhado-couve",
+        name: "Carapau Grelhado ao Alho e Limão com Couve Refogada Suave",
+        time: "25 minutos",
+        cost: "Cerca de 140 MT para 3 pessoas",
+        portion: "3 porções saudáveis",
+        benefits: [
+          "Carapau rico em Ómega-3 protetor do coração",
+          "Couve rica em fibras e magnésio para estabilizar a tensão",
+          "Zero caldos artificiais com excesso de sódio",
+        ],
+        ingredients: [
+          "3 carapaus médios frescos, limpos",
+          "4 dentes de alho esmagados",
+          "Sumo de 2 limões frescos",
+          "1 molho de couve tronchuda ou portuguesa, cortada fina",
+          "1 cebola média picada",
+          "1 colher de sopa de azeite ou óleo vegetal de qualidade",
+          "1 pitada suave de sal iodado (menos de meia colher de café)",
+          "Folhas de louro e piripiri a gosto",
+          "3 rodelas de tomate fresco para acompanhar",
+        ],
+        steps: [
+          "Tempere os carapaus com o alho esmagado, sumo de limão, louro e piripiri. Deixe marinar durante 15 minutos para apurar o sabor natural.",
+          "Grelhe os carapaus numa frigideira antiaderente ou grelha de carvão suave até a pele ficar dourada e crocante.",
+          "Numa panela, aqueça a colher de sopa de óleo com a cebola picada até amolecer.",
+          "Junte a couve cortada fina com duas colheres de água e tape a panela durante 4 a 5 minutos. O vapor vai amaciar a couve mantendo a sua cor verde viva e as vitaminas.",
+          "Sirva no prato: coloque metade do prato com a couve refogada, 1 carapau e acompanhe com uma chávena moderada de xima ou batata doce cozida.",
+        ],
+        nutritionNote: "A fibra abundante da couve impede que os hidratos de carbono da xima sejam absorvidos de forma rápida, evitando picos perigosos de glicemia.",
+      };
+
+      // ==========================================
+      // GUARANTEE BADGE COMPONENT
+      // ==========================================
+      const GuaranteeBadge = ({ variant = 'compact', className = '' }) => {
+        if (variant === 'seal') {
+          return (
+            <div className={`inline-flex items-center gap-3 bg-amber-50/90 border border-amber-300/80 rounded-2xl p-2.5 sm:px-4 sm:py-2.5 shadow-xs text-left ${className}`}>
+              <div className="relative w-11 h-11 rounded-full bg-gradient-to-br from-amber-400 via-amber-500 to-amber-600 text-amber-950 flex items-center justify-center shrink-0 shadow-sm border-2 border-white">
+                <div className="text-center leading-none">
+                  <span className="block text-xs font-black text-amber-950">7</span>
+                  <span className="block text-[8px] font-black uppercase tracking-tighter text-amber-950">DIAS</span>
+                </div>
+                <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-emerald-600 text-white flex items-center justify-center border border-white">
+                  <ShieldCheck className="w-2.5 h-2.5" />
+                </div>
+              </div>
+              <div>
+                <div className="flex items-center gap-1.5 text-xs font-bold text-amber-900 leading-tight">
+                  <span>7 Dias de Garantia Incondicional</span>
+                </div>
+                <p className="text-[11px] text-amber-800/80 leading-tight mt-0.5">
+                  Se não ficar satisfeito, devolvemos 100% do valor pago.
+                </p>
+              </div>
+            </div>
+          );
+        }
+
+        return (
+          <div className={`inline-flex items-center justify-center gap-2 text-xs font-semibold text-emerald-800 bg-emerald-50/90 px-3 py-1.5 rounded-lg border border-emerald-200/90 shadow-2xs ${className}`}>
+            <span className="w-5 h-5 rounded-full bg-emerald-700 text-white flex items-center justify-center shrink-0">
+              <ShieldCheck className="w-3.5 h-3.5" />
+            </span>
+            <span>7 Dias de Garantia · 100% Devolução Garantida</span>
+          </div>
+        );
+      };
+
+      // ==========================================
+      // VSL PLAYER COMPONENT
+      // ==========================================
+      const CHAPTERS = [
+        { time: 0, label: "0:00 · O choque do diagnóstico", desc: "Porque não precisa de comer comida sem sabor" },
+        { time: 65, label: "1:05 · O mito do sal e caldos artificiais", desc: "Como temperar com alho, limão e louro" },
+        { time: 145, label: "2:25 · O segredo da xima com couve", desc: "O método do prato que estabiliza a glicose" },
+        { time: 220, label: "3:40 · O que está dentro do ebook", desc: "Receitas, lista de compras e M-Pesa imediato" },
+      ];
+
+      const CAPTIONS = [
+        { start: 0, end: 12, text: "Se recebeu o diagnóstico de diabetes ou tensão alta, ouviu logo que não pode comer quase nada da nossa comida moçambicana." },
+        { start: 12, end: 25, text: "Dizem-lhe para esquecer a xima, esquecer o carapau frito e passar a comer comida sem graça. Mas isso é um erro grave." },
+        { start: 25, end: 45, text: "O segredo não é passar fome nem comprar comida cara de supermercado. É saber combinar os ingredientes simples do nosso mercado." },
+        { start: 45, end: 70, text: "Neste vídeo de 4 minutos, mostro-lhe exatamente como o nosso método do prato permite comer xima, feijão e couve com segurança total." },
+        { start: 70, end: 110, text: "O maior perigo na nossa cozinha não é a comida tradicional: são os caldos artificiais carregados de sal refinado e o excesso de óleo." },
+        { start: 110, end: 160, text: "Quando substitui esses caldos por alho fresco pisado, limão e piripiri suave, o sabor fica dez vezes melhor e a sua tensão agradece." },
+        { start: 160, end: 210, text: "E quando põe metade do prato com couve refogada ou espinafre, a fibra abranda a absorção dos hidratos da xima. O açúcar não sobe!" },
+        { start: 210, end: 260, text: "Juntámos tudo isto em 68 páginas no ebook 'Comer Bem com Diabetes e Hipertensão', por apenas 299 MT com entrega imediata no telemóvel." },
+      ];
+
+      const VslPlayer = ({ onCtaClick }) => {
+        const [isPlaying, setIsPlaying] = useState(false);
+        const [currentTime, setCurrentTime] = useState(0);
+        const duration = 240;
+        const [isMuted, setIsMuted] = useState(false);
+        const [showCaptions, setShowCaptions] = useState(true);
+        const [hasStarted, setHasStarted] = useState(false);
+
+        useEffect(() => {
+          let interval;
+          if (isPlaying) {
+            interval = setInterval(() => {
+              setCurrentTime((prev) => {
+                if (prev >= duration) {
+                  setIsPlaying(false);
+                  return 0;
+                }
+                return prev + 1;
+              });
+            }, 1000);
+          }
+          return () => clearInterval(interval);
+        }, [isPlaying, duration]);
+
+        const togglePlay = () => {
+          if (!hasStarted) setHasStarted(true);
+          setIsPlaying(!isPlaying);
+        };
+
+        const handleSeek = (newTime) => {
+          setCurrentTime(newTime);
+          if (!isPlaying) setIsPlaying(true);
+          if (!hasStarted) setHasStarted(true);
+        };
+
+        const currentCaption = CAPTIONS.find(c => currentTime >= c.start && currentTime < c.end)?.text;
+        const progressPercent = (currentTime / duration) * 100;
+
+        const formatTime = (seconds) => {
+          const mins = Math.floor(seconds / 60);
+          const secs = Math.floor(seconds % 60);
+          return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        };
+
+        return (
+          <div className="w-full max-w-4xl mx-auto rounded-2xl overflow-hidden border border-neutral-300 bg-neutral-900 shadow-xl">
+            <div className="relative aspect-video w-full bg-neutral-950 flex flex-col justify-between overflow-hidden select-none">
+              <div className="absolute inset-0 bg-gradient-to-tr from-neutral-950 via-emerald-950/40 to-neutral-900 flex items-center justify-center">
+                <div className="absolute inset-0 opacity-25 bg-[radial-gradient(#10b981_1px,transparent_1px)] [background-size:24px_24px]"></div>
+                
+                <div className="relative z-10 text-center px-6 max-w-xl">
+                  {!hasStarted ? (
+                    <div className="space-y-4">
+                      <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-semibold tracking-wide border border-emerald-500/30">
+                        <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+                        <span>Apresentação em Vídeo · 4 minutos</span>
+                      </div>
+                      <h3 className="text-xl sm:text-2xl font-bold text-white leading-tight">
+                        Como comer xima, peixe e verduras sem medo de prejudicar a saúde
+                      </h3>
+                      <p className="text-neutral-300 text-xs sm:text-sm">
+                        Clique no botão de reprodução para assistir à explicação prática do método moçambicano.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-full bg-emerald-900/60 border-2 border-emerald-500/50 flex items-center justify-center shadow-lg">
+                        <span className="text-2xl sm:text-3xl">🍲</span>
+                      </div>
+                      <p className="text-emerald-400 font-semibold text-xs tracking-wider uppercase">
+                        Apresentação Oficial · Guia Prático
+                      </p>
+                      <p className="text-lg sm:text-xl font-bold text-white">
+                        {currentTime < 65 && "O diagnóstico não é o fim da comida que você ama"}
+                        {currentTime >= 65 && currentTime < 145 && "Como temperar com riqueza moçambicana sem sal refinado"}
+                        {currentTime >= 145 && currentTime < 220 && "O método do prato: xima controlada + couve abundante"}
+                        {currentTime >= 220 && "Ebook completo por 299 MT com entrega imediata via M-Pesa"}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {!isPlaying && (
+                <div className="absolute inset-0 flex items-center justify-center z-20 bg-black/35 backdrop-blur-[2px] transition-all">
+                  <button
+                    onClick={togglePlay}
+                    className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white flex items-center justify-center shadow-2xl hover:scale-105 transition-transform cursor-pointer border-4 border-white/20 group"
+                    aria-label="Reproduzir vídeo"
+                  >
+                    <Play className="w-10 h-10 ml-1.5 text-white fill-white group-hover:scale-110 transition-transform" />
+                  </button>
+                </div>
+              )}
+
+              {showCaptions && currentCaption && (
+                <div className="relative z-20 px-4 sm:px-8 pb-3">
+                  <div className="mx-auto max-w-2xl bg-black/85 backdrop-blur-sm text-white px-4 py-2.5 rounded-lg text-xs sm:text-sm text-center border border-white/10 shadow-lg font-medium leading-relaxed">
+                    {currentCaption}
+                  </div>
+                </div>
+              )}
+
+              <div className="relative z-20 bg-gradient-to-t from-black via-black/80 to-transparent p-3 sm:p-4 flex flex-col gap-2">
+                <div 
+                  onClick={(e) => {
+                    const rect = e.currentTarget.getBoundingClientRect();
+                    const clickX = e.clientX - rect.left;
+                    const ratio = Math.max(0, Math.min(1, clickX / rect.width));
+                    handleSeek(ratio * duration);
+                  }}
+                  className="w-full h-2 bg-white/20 rounded-full cursor-pointer relative overflow-hidden group"
+                >
+                  <div 
+                    className="h-full bg-emerald-500 rounded-full transition-all duration-200 relative"
+                    style={{ width: `${progressPercent}%` }}
+                  >
+                    <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between text-white text-xs sm:text-sm">
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={togglePlay}
+                      className="p-1.5 rounded hover:bg-white/10 transition-colors cursor-pointer"
+                      aria-label={isPlaying ? "Pausar" : "Reproduzir"}
+                    >
+                      {isPlaying ? <Pause className="w-5 h-5 text-emerald-400" /> : <Play className="w-5 h-5 text-emerald-400 fill-emerald-400" />}
+                    </button>
+
+                    <button
+                      onClick={() => handleSeek(0)}
+                      className="p-1.5 rounded hover:bg-white/10 transition-colors cursor-pointer text-neutral-400 hover:text-white"
+                      title="Reiniciar vídeo"
+                    >
+                      <RotateCcw className="w-4 h-4" />
+                    </button>
+
+                    <span className="font-mono text-xs text-neutral-300 tabular-nums">
+                      {formatTime(currentTime)} / {formatTime(duration)}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setShowCaptions(!showCaptions)}
+                      className={`px-2 py-1 rounded text-xs font-semibold flex items-center gap-1 transition-colors cursor-pointer ${showCaptions ? 'bg-emerald-600 text-white' : 'bg-white/10 text-neutral-400 hover:text-white'}`}
+                      title="Legendas em português"
+                    >
+                      <Subtitles className="w-3.5 h-3.5" />
+                      <span className="hidden sm:inline-block">Legendas</span>
+                    </button>
+
+                    <button
+                      onClick={() => setIsMuted(!isMuted)}
+                      className="p-1.5 rounded hover:bg-white/10 transition-colors cursor-pointer text-neutral-300 hover:text-white"
+                      aria-label={isMuted ? "Ativar som" : "Desativar som"}
+                    >
+                      {isMuted ? <VolumeX className="w-4 h-4 text-red-400" /> : <Volume2 className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-neutral-950 border-t border-neutral-800 p-3 sm:p-4">
+              <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-2.5">
+                Capítulos da Apresentação:
+              </p>
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
+                {CHAPTERS.map((chap, idx) => {
+                  const isActive = currentTime >= chap.time && (idx === CHAPTERS.length - 1 || currentTime < CHAPTERS[idx + 1].time);
+                  return (
+                    <button
+                      key={idx}
+                      onClick={() => handleSeek(chap.time)}
+                      className={`text-left p-2.5 rounded-lg border transition-all cursor-pointer ${
+                        isActive 
+                          ? 'bg-emerald-950/60 border-emerald-500/50 text-emerald-200' 
+                          : 'bg-neutral-900 border-neutral-800 text-neutral-400 hover:bg-neutral-800 hover:text-neutral-200'
+                      }`}
+                    >
+                      <div className="text-xs font-bold text-white truncate">{chap.label}</div>
+                      <div className="text-[11px] text-neutral-400 line-clamp-1">{chap.desc}</div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        );
+      };
+
+      // ==========================================
+      // HEADER COMPONENT
+      // ==========================================
+      const Header = ({ onOpenCheckout }) => {
+        return (
+          <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-neutral-200">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-8">
+              <a href="#" className="flex items-center gap-2.5 text-neutral-900 font-bold text-lg tracking-tight whitespace-nowrap shrink-0 hover:text-emerald-800 transition-colors">
+                <span className="w-8 h-8 rounded-lg bg-emerald-700 text-white flex items-center justify-center font-bold text-base shadow-sm">
+                  <BookOpen className="w-4 h-4 text-emerald-100" />
+                </span>
+                <span>Comer Bem Moçambique</span>
+              </a>
+
+              <nav className="hidden md:flex items-center gap-7 text-sm font-medium text-neutral-600">
+                <a href="#problema" className="hover:text-neutral-950 transition-colors whitespace-nowrap shrink-0">
+                  O Problema
+                </a>
+                <a href="#metodo" className="hover:text-neutral-950 transition-colors whitespace-nowrap shrink-0">
+                  O Método do Prato
+                </a>
+                <a href="#conteudo" className="hover:text-neutral-950 transition-colors whitespace-nowrap shrink-0">
+                  O Que Recebe
+                </a>
+                <a href="#perguntas" className="hover:text-neutral-950 transition-colors whitespace-nowrap shrink-0">
+                  Perguntas
+                </a>
+              </nav>
+
+              <div className="flex items-center gap-3 shrink-0">
+                <a
+                  href={CHECKOUT_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-4 py-2 text-xs sm:text-sm font-semibold text-white bg-emerald-700 hover:bg-emerald-800 active:bg-emerald-900 rounded-lg shadow-sm hover:shadow transition-all whitespace-nowrap shrink-0 cursor-pointer"
+                >
+                  Quero o Ebook · 299 MT
+                </a>
+              </div>
+            </div>
+          </header>
+        );
+      };
+
+      // ==========================================
+      // HERO COMPONENT
+      // ==========================================
+      const Hero = ({ onOpenCheckout }) => {
+        return (
+          <section className="relative pt-8 sm:pt-12 pb-14 sm:pb-20 bg-gradient-to-b from-emerald-50/60 via-white to-white overflow-hidden">
+            <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[radial-gradient(#059669_1px,transparent_1px)] [background-size:20px_20px]" />
+
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 relative z-10">
+              <div className="text-center mb-4">
+                <p className="text-xs sm:text-sm font-semibold tracking-wide text-emerald-800 uppercase">
+                  Guia Nutricional 100% Moçambicano · Adaptado à Nossa Realidade
+                </p>
+              </div>
+
+              <h1 className="text-center text-3xl sm:text-5xl lg:text-5xl font-extrabold text-neutral-900 tracking-tight leading-[1.2] max-w-4xl mx-auto [text-wrap:balance]">
+                Continue a{' '}
+                <span className="text-emerald-800 font-black relative inline-block decoration-emerald-500 underline underline-offset-8 decoration-4">
+                  comer a comida que gosta
+                </span>
+                , com{' '}
+                <span className="text-amber-900 font-black underline decoration-amber-500 underline-offset-8 decoration-4">
+                  diabetes
+                </span>{' '}
+                ou{' '}
+                <span className="text-rose-900 font-black underline decoration-rose-500 underline-offset-8 decoration-4">
+                  tensão alta
+                </span>
+                .
+              </h1>
+
+              <p className="text-center text-base sm:text-xl text-neutral-600 mt-5 sm:mt-6 max-w-2xl mx-auto leading-relaxed [text-wrap:balance]">
+                Receitas moçambicanas simples, baratas e saborosas, com cardápio de 7 dias e lista de compras. Tudo com ingredientes do mercado local.
+              </p>
+
+              <div className="mt-8 sm:mt-10 mb-8 sm:mb-10">
+                <VslPlayer onCtaClick={onOpenCheckout} />
+              </div>
+
+              <div className="text-center max-w-xl mx-auto space-y-3.5">
+                <a
+                  href={CHECKOUT_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full sm:w-auto px-8 py-4 sm:py-4.5 bg-emerald-700 hover:bg-emerald-800 active:bg-emerald-900 text-white font-bold text-base sm:text-lg rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-3 mx-auto cursor-pointer group"
+                >
+                  <span>QUERO O MEU EBOOK POR 299 MT</span>
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </a>
+
+                <div className="flex justify-center pt-1">
+                  <GuaranteeBadge variant="seal" />
+                </div>
+
+                <p className="text-xs sm:text-sm text-neutral-600 font-medium">
+                  Pagamento seguro por M-Pesa, e-Mola, PayPal ou cartão. Recebes o PDF logo a seguir.
+                </p>
+              </div>
+
+              <div className="mt-10 pt-8 border-t border-neutral-200/80 grid grid-cols-2 md:grid-cols-4 gap-4 text-xs sm:text-sm text-neutral-700">
+                <div className="flex items-center gap-2">
+                  <Check className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>Sem produtos importados caros</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Check className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>Feito com a comida da nossa mesa</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Smartphone className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>Lê com facilidade no telemóvel</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>Garantia de 7 dias ou dinheiro de volta</span>
+                </div>
+              </div>
+            </div>
+          </section>
+        );
+      };
+
+      // ==========================================
+      // ROOT APP COMPONENT
+      // ==========================================
+      function App() {
+        const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+        const [isSampleRecipeOpen, setIsSampleRecipeOpen] = useState(false);
+
+        return (
+          <div className="min-h-screen bg-neutral-50 flex flex-col font-sans text-neutral-900 selection:bg-emerald-100 selection:text-emerald-900">
+            <Header onOpenCheckout={() => setIsCheckoutOpen(true)} />
+
+            <main className="flex-1">
+              <Hero onOpenCheckout={() => setIsCheckoutOpen(true)} />
+              <ProblemSection />
+              <SolutionSection 
+                onOpenCheckout={() => setIsCheckoutOpen(true)}
+                onOpenSampleRecipe={() => setIsSampleRecipeOpen(true)}
+              />
+              <WhatYouGetSection onOpenCheckout={() => setIsCheckoutOpen(true)} />
+              <AudienceSection />
+              <BonusSection onOpenCheckout={() => setIsCheckoutOpen(true)} />
+              <SocialProofSection />
+              <OfferSection onOpenCheckout={() => setIsCheckoutOpen(true)} />
+              <FaqSection />
+              <FinalCtaSection onOpenCheckout={() => setIsCheckoutOpen(true)} />
+            </main>
+
+            <a
+              href={`https://wa.me/258841234567?text=${encodeURIComponent("Olá! Estou no site do ebook Comer Bem com Diabetes e Hipertensão e gostaria de tirar uma dúvida sobre a compra.")}`}
+              target="_blank"
+              rel="noreferrer"
+              className="fixed bottom-5 right-5 z-40 bg-[#25D366] hover:bg-[#1EBE5D] text-white p-3.5 rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-all flex items-center justify-center cursor-pointer group"
+              aria-label="Falar pelo WhatsApp"
+              title="Dúvidas sobre M-Pesa ou o Ebook? Fale connosco"
+            >
+              <MessageCircle className="w-6 h-6 fill-white" />
+              <span className="hidden sm:inline-block max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300 ease-in-out whitespace-nowrap text-xs font-bold pl-0 group-hover:pl-2">
+                Dúvidas no WhatsApp
+              </span>
+            </a>
+
+            <CheckoutModal 
+              isOpen={isCheckoutOpen} 
+              onClose={() => setIsCheckoutOpen(false)} 
+            />
+
+            <SampleRecipeModal
+              isOpen={isSampleRecipeOpen}
+              onClose={() => setIsSampleRecipeOpen(false)}
+              onOpenCheckout={() => setIsCheckoutOpen(true)}
+            />
+          </div>
+        );
+      }
+
+      const root = ReactDOM.createRoot(document.getElementById('root'));
+      root.render(<App />);
+    </script>
+  </body>
+</html>
